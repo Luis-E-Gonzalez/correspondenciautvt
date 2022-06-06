@@ -75,7 +75,14 @@
 
                 <div class="form-group col-xs-3 col-md-6">
                     <label for="password">Contraseña: <b class="text-danger">*</b></label>
-                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" value="{{ old('password') }}" placeholder="Ingresa una contraseña" required>
+                    {{-- <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" value="{{ old('password') }}" placeholder="Ingresa una contraseña" required> --}}
+                    <div class="input-group">
+                        <input type="password" class="form-control @error('password') is-invalid @enderror"
+                            id="password" name="password" value="{{ old('password') }}" required>
+                        <button class="btn btn-outline-secondary" type="button" id="show_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     @error('password')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">Ingresa una contraseña válida</p>@enderror
                 </div>
             </div>
@@ -100,5 +107,16 @@
         </form>
     </div>
 </div>
+<script>
+    //Script del boton de mostrar contraseña en el formulario de registro de unosolo item
+    $('#show_password').on('click', function() {
+        var password = $('#password');
+        if (password.attr('type') === 'password') {
+            password.attr('type', 'text');
+        } else {
+            password.attr('type', 'password');
+        }
+    });
+</script>
 @endif
 @endsection
