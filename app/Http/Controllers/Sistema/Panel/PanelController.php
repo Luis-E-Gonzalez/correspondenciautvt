@@ -16,6 +16,9 @@ class PanelController extends Controller
 
     public function panel()
     {
+        if(Auth()->user()->activo == 0){
+            return redirect()->route('login');
+        }else{
         $user = auth()->user()->idu;
         $area = Auth()->user()->idar_areas;
         
@@ -54,6 +57,7 @@ class PanelController extends Controller
                 'actividades_sin_acuse_de_recibido' => $this->getActividadesSinAcuseDeRecibido()->count(),
                 'user' => $user,
             ]);
+        }
         }
     }
 
