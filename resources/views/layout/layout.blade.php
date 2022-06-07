@@ -123,7 +123,7 @@
                                     Administrador
                                 @endif
                                 @if (Auth()->user()->idtu_tipos_usuarios == 2)
-                                    <a href="{{ url('/panel') }}">Direccion de Carrera</a>
+                                    <a class="lin ">Direccion de Carrera</a>
                                 @endif
                                 @if (Auth()->user()->idtu_tipos_usuarios == 3)
                                     <a href="{{ url('/panel') }}">Rector</a>

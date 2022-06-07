@@ -218,7 +218,7 @@ class ActividadesController extends Controller
                 INNER JOIN tipos_actividades AS ta ON ta.idtac = ac.idtac_tipos_actividades
                 LEFT JOIN responsables_actividades AS ra ON ra.idac_actividades = ac.idac
                 LEFT JOIN seguimientos_actividades AS sa ON sa.idreac_responsables_actividades = idreac
-                WHERE ac.`fecha_inicio` >=  DATE('$fechaIni') 
+                WHERE ac.`fecha_inicio` >=  DATE('$fechaIni')
                 AND ac.activo = 1
                 AND ac.aprobacion = 1
                 GROUP BY ac.idac
@@ -291,7 +291,7 @@ class ActividadesController extends Controller
                 LEFT JOIN responsables_actividades AS ra ON ra.idac_actividades = ac.idac
                 LEFT JOIN seguimientos_actividades AS sa ON sa.idreac_responsables_actividades = idreac
                 WHERE ac.`fecha_fin` <=  DATE('$fechaFin')
-                AND ac.activo = 1 
+                AND ac.activo = 1
                 AND ac.aprobacion = 1
                 GROUP BY ac.idac
                 ORDER BY ac.fecha_creacion DESC");
@@ -302,7 +302,7 @@ class ActividadesController extends Controller
         //variable que crea un array para el uso de la tabla de ZingGrid
         $array = array();
 
-        
+
         //Funcion para mostrar los datos del poncentaje de cada actividad y darle formato(NOTA: el porcentaje de recupera en una funcion en la base de datos)
         function recorrer($value)
         {
@@ -590,7 +590,7 @@ class ActividadesController extends Controller
 
     public function pdf($idac)
     {
-        //variable que recupera y desencripta el id 
+        //variable que recupera y desencripta el id
         $idac = decrypt($idac);
         //consulta que trae los datos de la actividad y los directivos que aceptaron dicha actividad
         $data = DB::SELECT("SELECT CONCAT(us.titulo,' ',us.nombre,' ',us.app,' ',us.apm) AS nombre, DATE_FORMAT(res.fecha_acuse,'%d-%m-%Y') AS fecha_acuse, CONCAT(ta.nombre,' / ',ar.nombre) AS area,
@@ -605,6 +605,7 @@ class ActividadesController extends Controller
 
         //vista que se carga con toda la informacion correspondiente
         $pdf = PDF::loadView('Actividades.pdf', compact('data'));
+        $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('PDF de actividades seguimientos.pdf');
     }
 
@@ -740,12 +741,12 @@ class ActividadesController extends Controller
     public function actividades()
     {
         //funcion para el modulo de la creacion de actividades
-    
+
         //Condicion para determinar si la persona que esta haciendo la actividad es asistente o no
         if (Auth()->user()->idtu_tipos_usuarios == 4) {
 
             //variable que determina el encargado(a) del area de la secretaria
-            $dir = DB::SELECT("SELECT idu FROM users 
+            $dir = DB::SELECT("SELECT idu FROM users
                             WHERE idar_areas = " . Auth()->user()->idar_areas .
                             " AND idtu_tipos_usuarios = 2");
 
@@ -813,7 +814,7 @@ class ActividadesController extends Controller
     public function tipousuarios(Request $request)
     {
         //Funcion para el AJAX del selector de usuarios de actividad
-        
+
         //variable que saca el valor obtenido del request del select de las areas
         $id = $request->tipo_u;
 
@@ -836,7 +837,7 @@ class ActividadesController extends Controller
     public function insert_actividad(Request $r)
     {
         //funcion para insertar las actividades dentro de la base de datos
-        
+
         //variables que recolecta todo lo que llego en el request
         $idusuario = $r->idusuario;
         $idar_areas = $r->idar_areas;
@@ -850,7 +851,7 @@ class ActividadesController extends Controller
         $horadeinicio = $r->horadeinicio;
         $horatermino = $r->horatermino;
         $detalleactividad = $r->detalleactividad;
-        
+
         //condiciones para determinar si se subio algun archivo o no
 
         if ($r->file('archivos') != null) {
@@ -952,13 +953,13 @@ class ActividadesController extends Controller
         for ($i = 0; $i < count($tipousuarioarea); $i++) {
 
             DB::INSERT("INSERT INTO responsables_actividades (idu_users , idac_actividades) VALUES ('$tipousuarioarea[$i]','$consul')");
-        } 
+        }
 
         /**
          * Envio de correos a los usuarios asignados.
          * Obteniendo los responsables de el request
          */
-    
+
         $userForMail = DB::select("SELECT CONCAT(us.titulo,' ', us.nombre, ' ', us.app, ' ', us.apm) AS nombre,
             CONCAT(ac.fecha_inicio,' al ', ac.fecha_fin) AS periodo, us.email,
             CONCAT(us2.titulo,' ', us2.nombre, ' ', us2.app, ' ', us2.apm) AS creador,
@@ -967,10 +968,10 @@ class ActividadesController extends Controller
              JOIN actividades AS ac ON ac.idac = res.idac_actividades
              JOIN tipos_actividades AS tp ON tp.idtac = ac.idtac_tipos_actividades
              JOIN users AS us ON us.idu = res.idu_users
-             JOIN users AS us2 ON us2.idu = ac.idu_users         
+             JOIN users AS us2 ON us2.idu = ac.idu_users
              WHERE  res.idac_actividades = $consul
     ");
-     
+
         foreach($userForMail as $correos){
             Mail::to($correos->email)->send(new enviar_asignacion($correos));
         }
@@ -986,7 +987,7 @@ class ActividadesController extends Controller
         } else {
 
             return redirect('panel');
-        } 
+        }
     }
 
     public function actividades_modificacion($id)
@@ -1090,7 +1091,7 @@ class ActividadesController extends Controller
 
         /*
         Condicion que crea una variable en la cual se determina si en la consulta hay areas seleccionadas en las actividades seleccionadas
-        la cual en esta consulta se sacan las otras areas menos las que se pusieron inicialmente en la creacion del evento    
+        la cual en esta consulta se sacan las otras areas menos las que se pusieron inicialmente en la creacion del evento
         por ello hay un not in que son las de la consulta anrerior
         */
         if (count($array2) > 0) {
@@ -1117,7 +1118,7 @@ class ActividadesController extends Controller
         INNER JOIN users AS u ON u.idu = re.idu_users
         INNER JOIN areas AS a ON a.idar = u.idar_areas
         WHERE ac.idac = $id");
-        
+
         //Variables de tipo array
         $array3 = array();
         $array4 = array();
@@ -1205,7 +1206,7 @@ class ActividadesController extends Controller
         AND re.idac_actividades = $id
         AND us.idar_areas = $val");
 
-        //Consulta en la que trae las areas  
+        //Consulta en la que trae las areas
 
         $consul2 = DB::SELECT("SELECT us.idu, ar.nombre FROM users AS us
         INNER JOIN areas AS ar ON ar. idar = us.idar_areas
@@ -1383,7 +1384,7 @@ class ActividadesController extends Controller
 
         //Condiciones que terminan donde redirigir
         if (Auth()->user()->idtu_tipos_usuarios == 2) {
-            
+
             return redirect()->route('actividades_creadas', ['id' => encrypt(Auth()->user()->idu)]);
         } else if (Auth()->user()->idtu_tipos_usuarios == 3) {
 
@@ -1595,7 +1596,7 @@ class ActividadesController extends Controller
         //Verificar el rol de usuario si es asistente o directivo
         if ($tipo == 4) {
 
-            $dir = DB::SELECT("SELECT idu FROM users 
+            $dir = DB::SELECT("SELECT idu FROM users
                             WHERE idar_areas = " . Auth()->user()->idar_areas .
                             " AND idtu_tipos_usuarios = 2");
 
@@ -1935,7 +1936,7 @@ class ActividadesController extends Controller
                 if ($activo == 1) {
 
                     return "<div class='btn-group me-2' role='group' aria-label='Second group'><a  class='btn btn-success btn-sm mt-1'  href=" . route('Detalles', ['id' => encrypt($idac)]) . "><i class='nav-icon fas fa-eye'></i></a>";
-                    
+
                 }
             }
         }
