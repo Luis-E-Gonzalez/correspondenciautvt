@@ -151,6 +151,7 @@
                                 </p>
                             </a>
                         </li>
+                        @if(Auth()->user()->activo === 1)
                         @if (Auth()->user()->idtu_tipos_usuarios == 1)
                             <li class="nav-item has-treeview">
                                 <a href="#" class="nav-link">
@@ -417,5 +418,5 @@
     @yield('scripts')
 
 </body>
-
+@endif
 </html>

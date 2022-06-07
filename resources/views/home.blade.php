@@ -9,8 +9,7 @@
 @endsection
 
 @section('content')
-    {{-- If que si equivale a 1 significa que el usuario esta activo --}}
-    @if(Auth()->user()->activo === 1)
+
     <div class="form-row">
         <div class="form-group col-12">
             <div class="box">
@@ -162,5 +161,4 @@
     </script>
     <script type="module" src="/js/panel/panel.js"></script>
 @endsection
-@endif
 @endsection
