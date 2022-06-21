@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateResponsablesActividadesTable extends Migration
+class CreateMensajesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,15 @@ class CreateResponsablesActividadesTable extends Migration
      */
     public function up()
     {
-        Schema::create('responsables_actividades', function (Blueprint $table) {
-            $table->bigIncrements('idreac');
+        Schema::create('mensajes', function (Blueprint $table) {
+            $table->bigIncrements('idm');
             $table->unsignedBigInteger('idu_users');
             $table->unsignedBigInteger('idac_actividades');
-            $table->string('firma');
-            $table->boolean('acuse')->default(1);
+            $table->string('mensaje');
             $table->dateTime('fecha');
-            $table->timestamps();
             $table->foreign('idu_users')->references('idu')->on('users');
             $table->foreign('idac_actividades')->references('idac')->on('actividades');
+            $table->timestamps();
         });
     }
 
@@ -33,6 +32,6 @@ class CreateResponsablesActividadesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('responsables_actividades');
+        Schema::dropIfExists('mensajes');
     }
 }

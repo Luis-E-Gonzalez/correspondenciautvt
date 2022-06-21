@@ -970,7 +970,7 @@ class ActividadesController extends Controller
              JOIN users AS us ON us.idu = res.idu_users
              JOIN users AS us2 ON us2.idu = ac.idu_users
              WHERE  res.idac_actividades = $consul
-    ");
+        ");
 
         foreach($userForMail as $correos){
             Mail::to($correos->email)->send(new enviar_asignacion($correos));

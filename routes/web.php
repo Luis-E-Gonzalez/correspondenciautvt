@@ -17,6 +17,7 @@ use App\Http\Controllers\Sistema\TipoAreas\TipoAreasController;
 use App\Http\Controllers\Graficas\GraficasPorTipoAreaController;
 use App\Http\Controllers\Graficas\GraficasDeActividadesCreadasController;
 use App\Http\Controllers\CorreoController;
+use App\Http\Controllers\MensajesController;
 
 
 //////////// RUTAS PARA LA PARTE INICIAL DEL SISTEMA. ///////////////
@@ -24,7 +25,7 @@ use App\Http\Controllers\CorreoController;
 // Código para validar el correo electrónico.
 Route::get('pruebaCorreo', [CorreoController::class,'enviarNuevo'])->name('pruebaCorreo');
 
-// Código para borrar el caché del sistema. 
+// Código para borrar el caché del sistema.
 Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
     return 'Application cache cleared';
@@ -46,7 +47,7 @@ Route::get('/run-schedules', function() {
 Route::get('/config-cache', function() {
     $exitCode = Artisan::call('config:cache');
     return 'Config cache cleared';
-}); 
+});
 
 // Eliminación del caché en la vista.
 Route::get('/view-clear', function() {
@@ -74,7 +75,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 //////////////////////////////////////////////  U S U A R I O S  ///////////////////////////////////////////////////////////////
-   
+
     Route::resource('users', UsersController::class, ['names' => 'users']);
 
     // Ruta para editar el perfil.
@@ -132,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Agregar actividad desde la Vista Actividades.
     Route::post('add_tipo_actidad', [ActividadesController::class, 'add_tipo_actidad'])->name('add_tipo_actidad');
-   
+
     // Ruta - Index.
     Route::get('hello', [EncryptController::class,'index']);
 
@@ -168,26 +169,28 @@ Route::middleware(['auth'])->group(function () {
 
     // Ruta - Actividades completadas.
     Route::post('/dashboard/{user}/actividades-creadas/get-actividades-completadas', [GraficasDeActividadesCreadasController::class,'actividadesCompletadas']);
-    
+
     // Ruta - Actividades en proceso.
     Route::post('/dashboard/{user}/actividades-creadas/get-actividades-en-proceso', [GraficasDeActividadesCreadasController::class,'actividadesEnProceso']);
-    
+
     // Ruta - Actividades sin entregar.
     Route::post('/dashboard/{user}/actividades-creadas/get-actividades-sin-entregar', [GraficasDeActividadesCreadasController::class,'actividadesSinEntregar']);
-    
+
     // Ruta - Actividades con acuse.
     Route::post('/dashboard/{user}/actividades-creadas/get-actividades-con-acuse-de-recibido', [GraficasDeActividadesCreadasController::class,'actividadesConAcuseDeRecibido']);
     Route::post('/dashboard/{user}/actividades-creadas/get-actividades-sin-acuse-de-recibido', [GraficasDeActividadesCreadasController::class,'actividadesSinAcuseDeRecibido']);
     Route::post('/dashboard/{user}/actividades-creadas/get-actividades-por-area', [GraficasDeActividadesCreadasController::class,'getActividadesPorTipoArea']);
-    
-    // Ruta - Actividades concluidas. 
+
+    // Ruta - Actividades concluidas.
     Route::post('/dashboard/{user}/actividades-creadas/actividades-completadas-en-tiempo', [GraficasDeActividadesCreadasController::class,'actividadesCompletadasEnTiempo'])->name('actividades.en-tiempo');
     Route::post('/dashboard/{user}/actividades-creadas/actividades-completadas-fuera-de-tiempo', [GraficasDeActividadesCreadasController::class,'actividadesCompletadasFueraDeTiempo']);
     Route::post('/dashboard/{user}/actividades-creadas/actividades-en-proceso-en-tiempo', [GraficasDeActividadesCreadasController::class,'actividadesEnProcesoEnTiempo']);
     Route::post('/dashboard/{user}/actividades-creadas/actividades-en-proceso-fuera-de-tiempo', [GraficasDeActividadesCreadasController::class,'actividadesEnProcesoFueraDeTiempo']);
-    
+
     // Ruta - Detalle de una actividad.
     Route::get('/detalle-actividad/{idac}', [GraficasDeActividadesCreadasController::class,'detalleActividad']);
+
+    Route::resource('mensajes', MensajesController::class);
 
 });
 
