@@ -59,6 +59,7 @@ class ActividadesController extends Controller
         {
 
             return "<a class='btn btn-success btn-sm'  href=" . route('Detalles', ['id' => encrypt($idac)]) . "><i class='nav-icon fas fa-eye'></i></a>";
+
         }
 
         //funcion para mostrar las fechas
@@ -499,6 +500,10 @@ class ActividadesController extends Controller
             }
         }
 
+        function mensajes($idac){
+            return "<a href=".route('mensajes.create', encrypt($idac))."><button type='button' class='btn btn-warning btn-sm'><i class='fa fa-envelope'></i></button></a>";
+            // <i class="fa-solid "></i>
+        }
 
         //funcion que controla los mensajes de finalizacion de la actividad
         function D($porcentaje, $fecha_fin, $created_at, $acuse)
@@ -557,6 +562,7 @@ class ActividadesController extends Controller
                 'estado' =>  D($c->porcentaje, $c->fecha_fin, $c->created_at_seg, $c->acuse),
                 'acuse' => $data1,
                 'operaciones' => btn($c->idreac, $c->acuse, $c->razon_rechazo, $c->idreac, $us_id),
+                'mensajes' => mensajes($c->idreac),
             ));
         }
 

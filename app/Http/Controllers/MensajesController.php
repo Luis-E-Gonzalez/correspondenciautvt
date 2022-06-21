@@ -66,9 +66,8 @@ class MensajesController extends Controller
      */
     public function create()
     {
-        $user = User::all();
-        $actividades = Actividades::all();
-        return view('mensajes.create', compact('user', 'actividades'));
+
+        return view('mensajes.create');
     }
 
     /**
