@@ -12,17 +12,20 @@ class mensaje_error extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
+    public $user;
 
-    public $subject = "Atención, al parecer tiene un error en la actividad.";
+    public $subject = "Atención, al parecer tiene un error en una de sus actividades.";
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data, $user)
     {
         $this->data = $data;
+        $this->user = $user;
+
     }
 
     /**

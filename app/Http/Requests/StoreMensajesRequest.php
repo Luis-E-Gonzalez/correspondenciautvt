@@ -24,10 +24,10 @@ class StoreMensajesRequest extends FormRequest
     public function rules()
     {
         return [
-            'idac_actividades' => ['required', 'integer'],  // id de la actividad
-            'idu_users' => ['required', 'exists:users,idu'], // id del usuario
-            'mensaje' => ['required', 'string'], // mensaje
-            'fecha' => ['required', 'date'], // fecha
+            'idac_actividades' =>   'required',
+            'idu_users' =>   'required',
+            'mensaje' =>   'required',
+            'fecha' =>   'required',
         ];
     }
 }

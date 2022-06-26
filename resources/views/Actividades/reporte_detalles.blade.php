@@ -29,7 +29,6 @@
         <a href="{{route('pdf',['idac' => encrypt($idac)])}}" class="btn btn-primary" target="_blank" {{($boton->boton == 0) ? 'hidden' : ''}}>PDF</a>
         </div>
       </div>
-
     </div>
     <zing-grid
                 lang="custom"

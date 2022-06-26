@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\Actividades;
 use App\Models\ResponsablesActividades;
 use App\Models\Users;
+use App\Models\Mensajes;
 use App\Models\SeguimientosActividades;
 use App\Models\TiposActividades;
 use Illuminate\Support\Facades\Auth;
@@ -500,9 +501,80 @@ class ActividadesController extends Controller
             }
         }
 
-        function mensajes($idac){
-            return "<a href=".route('mensajes.create', encrypt($idac))."><button type='button' class='btn btn-warning btn-sm'><i class='fa fa-envelope'></i></button></a>";
-            // <i class="fa-solid "></i>
+        //consulta que se mandara los datos del usuario seleccionado en el reporte de actividades, el id de la actividad y el id del usuario
+        // function datosUser(){
+
+        //     $query2 =  DB::SELECT("SELECT res.idu_users, ar.nombre AS nombre_ar, CONCAT(us.titulo,' ', us.nombre, ' ', us.app, ' ', us.apm) AS nombre_us,
+        // res.acuse, res.idreac, seg.estado, Max(seg.porcentaje) as porcentaje, razon_rechazo, ac.fecha_fin, ac.status AS status_ac, us.idtu_tipos_usuarios, Max(DATE(seg.created_at)) as created_at_seg
+        // FROM responsables_actividades AS res
+        // JOIN actividades AS ac ON ac.idac = res.idac_actividades
+        // JOIN users AS us ON us.idu = res.idu_users
+        // JOIN areas AS ar ON ar.idar = us.idar_areas
+        // LEFT JOIN seguimientos_actividades AS seg ON seg.idreac_responsables_actividades = res.idreac
+        // WHERE idac_actividades = $idac
+        // AND ac.aprobacion = 1
+        // GROUP BY idu_users");
+
+        // return view('mensajes.create' , compact('query2'));
+        // }
+
+        function mensajeAdd($idac){
+        //variable que recupera el id del usuario en sesion
+        $us_id = \Auth()->User()->idu;
+
+        //mensaje por defecto
+        $mensaje = "Mensaje por defecto";
+
+        //variable de la fecha actual
+        $fecha =Carbon::now();
+
+        //consulta que se mostrara en los reportes
+        $query = DB::SELECT("SELECT res.idu_users, ar.nombre AS nombre_ar, CONCAT(us.titulo,' ', us.nombre, ' ', us.app, ' ', us.apm) AS nombre_us,
+        res.acuse, res.idreac, seg.estado, Max(seg.porcentaje) as porcentaje, razon_rechazo, ac.fecha_fin, ac.status AS status_ac, us.idtu_tipos_usuarios, Max(DATE(seg.created_at)) as created_at_seg
+        FROM responsables_actividades AS res
+        JOIN actividades AS ac ON ac.idac = res.idac_actividades
+        JOIN users AS us ON us.idu = res.idu_users
+        JOIN areas AS ar ON ar.idar = us.idar_areas
+        LEFT JOIN seguimientos_actividades AS seg ON seg.idreac_responsables_actividades = res.idreac
+        WHERE idac_actividades = $idac
+        AND ac.aprobacion = 1
+        GROUP BY idu_users");
+
+            //modal que se muestra al dar click en el boton de agregar mensaje
+           return "<button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#create$idac'><i class='nav-icon fas fa-plus'></i>
+           </button>
+            <div class='modal fade' id='create$idac'>
+                <div class='modal-dialog'>
+                    <div class='modal-content'>
+                        <div class='modal-header'>
+                          <h4>Agregar mensaje</h4>
+                    </div>
+                        <div class='modal-body'>
+                            <form action=" . route('mensajes.store') . " method='POST' enctype='multipart/form-data'>
+                            <input type='hidden' name='_token' value=" . csrf_token() . ">
+                            <input type='hidden' value=" . $idac . " name='idac'>
+                                <label for='Mensaje'>Mensaje</label>
+                                <textarea class='form-control' name='mensaje' id='mensaje' value='".$mensaje."' rows='5' required></textarea>
+                                <input type='hidden' value='".$idac."' name='idac_actividades'>
+                                <label for=''>Usuario a mandar el mensaje</label>
+                                <input type='hidden' class='form-control' id='recipient-name' name='idu_users' value='".$query[0]->idu_users."' >
+                                <input type='text' class='form-control' id='recipient-name' value='".$query[0]->nombre_us."' >
+                                <label for=''>Fecha de envio</label>
+                                <input type='text' class='form-control' id='recipient-name' name='fecha' value='".$fecha."' >
+                                <button type='submit' class='btn btn-sm btn-success'><i class='fas fa-check-circle'></i></button>
+                           </form>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>";
+            // //inserta el mensaje en la base de datos tomando los datos del formulario
+            // $mensaje = new Mensaje;
+            // $mensaje->idu_users = $us_id;
+            // $mensaje->idac_actividades = $idac;
+            // $mensaje->mensaje = $request->mensaje;
+            // $mensaje->fecha = $request->fecha;
+            // $mensaje->save();
         }
 
         //funcion que controla los mensajes de finalizacion de la actividad
@@ -562,7 +634,7 @@ class ActividadesController extends Controller
                 'estado' =>  D($c->porcentaje, $c->fecha_fin, $c->created_at_seg, $c->acuse),
                 'acuse' => $data1,
                 'operaciones' => btn($c->idreac, $c->acuse, $c->razon_rechazo, $c->idreac, $us_id),
-                'mensajes' => mensajes($c->idreac),
+                'mensajes' => mensajeAdd($c->idreac),
             ));
         }
 

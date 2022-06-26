@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreMensajesRequest;
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateMensajesRequest;
 use App\Models\Mensajes;
 use App\Models\User;
 use App\Models\Actividades;
-use App\Mails\mensaje_error;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\mensaje_error;
 use DB;
 
 class MensajesController extends Controller
@@ -60,31 +61,37 @@ class MensajesController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-        return view('mensajes.create');
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreMensajesRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreMensajesRequest $request)
+    public function store(Request $request)
     {
-        $mensajes = Mensajes::create([
-            'idac_actividades' => $request->idac_actividades,
-            'idu_users' => $request->idu_users,
-            'mensaje' => $request->mensaje,
-            'fecha' => $request->fecha,
-        ]);
-        return redirect()->route('mensajes.index')->with('success', 'Mensaje creado con éxito');
+        //FUNCION QUE GUARDA LOS DATOS DE UN NUEVO MENSAJE
+        $mensaje = new Mensajes;
+        $mensaje->idu_users = $request->idu_users;
+        $mensaje->idac_actividades = $request->idac_actividades;
+        $mensaje->mensaje = $request->mensaje;
+        $mensaje->fecha = $request->fecha;
+        $mensaje->save();
+
+        //consulta para obtener el correo del usuario que realiza el mensaje
+        $user = User::find($request->idu_users);
+        $correo = $user->email;
+
+       //obtiene el contenido del mensaje y lo guarda en una variable
+        $contenido = $request->mensaje;
+
+
+
+
+        //Envia el correo al usuario con el mensaje
+        Mail::to($correo)->send(new mensaje_error($contenido, $user));
+
+        //Retorna a la vista de los mensajes
+        return redirect('/panel');
+
     }
 
     /**
